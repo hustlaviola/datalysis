@@ -9,13 +9,13 @@ const log = debug('app:http');
 const router = express.Router();
 
 router.get('/transactions', async (req, res, next) => {
+    // await agentDAO.addSubAgents();
+    // return { hi: "yaas"};
     const today = new Date(new Date(Date.now()).setHours(0, 0, 0, 0));
-    
-    console.log('today', today);
+
     
     const yesterday = new Date(new Date(today.setDate(today.getDate() - 1)).toUTCString())
 
-    console.log('yesterday', yesterday);
     let date = yesterday;
 
     if (req.query.date) date = new Date(new Date(new Date(req.query.date).setHours(0, 0, 0, 0)).toUTCString());

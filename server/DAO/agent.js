@@ -1,5 +1,17 @@
 const Agent = require('../models/Agent');
+const SubAgent = require('../models/SubAgent');
 const Transaction = require('../models/Transaction');
+
+// const subAgents = [];
+
+// const addSubAgents = async () => {
+//     while (subAgents.length > 200) {
+//         await SubAgent.insertMany(subAgents.splice(0, 200))
+//     }
+//     if (subAgents.length !== 0) {
+//         return SubAgent.insertMany(subAgents);
+//     }
+// };
 
 const addAgents = async agents => {
     while (agents.length > 200) {
@@ -12,11 +24,7 @@ const addAgents = async agents => {
 
 const agentsTnx = async date => {
     const data = [];
-    let ll = 0;
-    const agents = await Agent.find().sort({agent: 1});
-    console.log('AGENTS LENGTH', agents.length)
-
-    console.log('DATE ======= ', date);
+    const agents = await SubAgent.find().sort({agent: 1});
 
     const transactions = await Transaction.aggregate([
         {
@@ -40,26 +48,23 @@ const agentsTnx = async date => {
             }
         }
     ]);
-    console.log('TRANSACTIONS LENGTH', transactions.length)
     agents.forEach(agent => {
         let ag = {
             agent: agent.agent,
             amount: 0
         };
         for (let i = 0; i < transactions.length; i++) {
-            if (transactions[i].name == agent.agent) {
+            if (transactions[i].name.toLowerCase() == agent.agent.toLowerCase()) {
                 ag = {
                     agent: agent.agent,
                     email: transactions[i].email,
                     amount: transactions[i].totalAmount
                 };
-                ll += 1;
                 break;
             }
         }
         data.push(ag);
     });
-    console.log('LL', ll);
     return data;
 }
 
@@ -156,5 +161,6 @@ const agentsTnx = async date => {
 
 module.exports = {
     addAgents,
-    agentsTnx
+    agentsTnx,
+    // addSubAgents
 };
